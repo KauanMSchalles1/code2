@@ -1,0 +1,19 @@
+/* Ajustar altura da imagem */
+.carousel-inner img {
+  height: 300px; 
+  object-fit: cover; 
+  max-width: 1050px;
+  
+}
+
+
+.carousel-item img {
+  display: block;
+  margin: 0 auto;
+  
+}
+
+.carousel-item img {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
