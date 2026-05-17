@@ -3,7 +3,7 @@
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');           // Seu usuário MySQL
-define('DB_PASS', '');               // Sua senha MySQL (vazia se não tem)
+define('DB_PASS', 'Ang!@#123');               // Sua senha MySQL (vazia se não tem)
 define('DB_NAME', 'pizzacode_db');
 
 // Criar conexão
