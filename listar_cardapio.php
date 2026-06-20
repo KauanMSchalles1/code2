@@ -1,20 +1,37 @@
 <?php
-// api/listar_cardapio.php - Endpoint para listar pizzas do cardápio
+// api/listar_cardapio.php - Endpoint para listar pizzas com categoria
 
 header('Content-Type: application/json');
 require_once '../config/db.php';
 
-// Permitir requisições de qualquer origem (CORS)
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 
-// Verificar se é GET
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     responderJSON(false, 'Método não permitido');
 }
 
-// Query para buscar pizzas ativas
-$sql = "SELECT id, nome, descricao, preco, imagem FROM menu_pizzas WHERE ativa = TRUE ORDER BY nome ASC";
+// Recebe categoria via GET (opcional)
+$categoria = isset($_GET['categoria']) ? sanitizar($conn, $_GET['categoria']) : '';
+
+$sql = "SELECT id, nome, descricao, preco, imagem, categoria 
+        FROM menu_pizzas 
+        WHERE ativa = TRUE";
+
+if (!empty($categoria) && $categoria !== 'todos') {
+    $sql .= " AND categoria = '$categoria'";
+}
+
+$sql .= " ORDER BY 
+            CASE categoria 
+                WHEN 'tradicional' THEN 1
+                WHEN 'especial' THEN 2
+                WHEN 'picante' THEN 3
+                WHEN 'doce' THEN 4
+                WHEN 'premium' THEN 5
+                ELSE 6
+            END, nome ASC";
+
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -23,12 +40,13 @@ if (!$result) {
 
 $pizzas = [];
 while ($row = $result->fetch_assoc()) {
+    // Garantir que imagem tenha um caminho padrão se estiver vazio
+    if (empty($row['imagem'])) {
+        $row['imagem'] = 'image/pizza_padrao.jpg';
+    }
     $pizzas[] = $row;
 }
 
-// Retornar como JSON
-header('Content-Type: application/json');
 echo json_encode($pizzas);
-
 $conn->close();
 ?>
